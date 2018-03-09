@@ -1,0 +1,190 @@
+/* General */
+
+body{
+  background: #fff;
+  width: 355px;
+  height: 469px;
+  margin: 0;
+  overflow: hidden;
+}
+
+.addon-container{
+  margin: 3px;
+  height: 100%;
+  background: #48b1bf;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to bottom, #06beb6, #48b1bf);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom, #06beb6, #48b1bf); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  box-shadow: -1px 2px 12px grey;
+}
+
+.all-youtube-tabs{
+  padding-top: 5px;
+  height: 410px;
+  overflow-y: scroll;
+}
+
+.search-container{
+  padding-top: 75px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.search-input{
+  width: 250px;
+  height: 45px;
+  outline: none;
+  border: 0;
+  padding-left: 40px;
+
+  background: #fffffff2;
+  color: grey;
+
+  background-image: url('/icons/search.svg');
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+}
+
+.search-input::placeholder{
+  color: #a3a3a3;
+}
+
+.svg{
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.svg-next{
+  margin-bottom: 1px;
+}
+
+.line{
+  margin: 0;
+}
+
+.addon-header{
+  display: flex;
+  height: 50px;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 15px;
+  padding-right: 10px;
+
+  background: #146c79;
+  color: #dae0e5;
+}
+
+.popup-title{
+  letter-spacing: 1px;
+  font-size: 20px;
+  padding-top: 10px;
+}
+
+.header-options{
+  display: flex;
+  justify-content: space-around;
+  width: 85px;
+}
+
+.btn-xs{
+  padding: 1px 3px;
+  font-size: 11px;
+  line-height: 1.5;
+  border-radius: 3px;
+  margin-right: 4px;
+}
+
+.refresh-icon{
+  height: 21px;
+  width: 18px;
+}
+
+.info-icon{
+  height: 20px;
+  width: 20px;
+}
+
+.search-icon{
+  height: 23px;
+  width: 23px;
+}
+
+/* Playlist */
+.playlist{
+  margin: 4px 6px;
+  margin-bottom: 12px;
+  height: 100px;
+  border-radius: 5px;
+
+  transition-duration: 0.4s;
+  background: #146c79;
+}
+
+.playlist:hover{
+  transition-duration: 0.3s;
+  box-shadow: 0px 2px 5px #13363c;
+}
+
+.playlist-thumbnail{
+  margin-top: 1px;
+  width: 30%;
+  height: 75%;
+  padding: 6px;
+  margin-right: 4px;
+}
+
+.media-body{
+  height: 100%;
+  position: relative;
+}
+
+.media-body-title{
+  font-size: 12px;
+  padding-top: 8px;
+  padding-right: 20px;
+  display: block;
+  color: floralwhite;
+  height: 65px;
+  overflow: hidden;
+}
+
+span.media-body-title:hover {
+    cursor: default;
+}
+
+.playlist-control{
+  margin-top: 5px;
+}
+
+.svg-close{
+  position: absolute;
+  top: 3;
+  right: 6;
+  cursor: pointer;
+
+  transition-timing-function: ease-in-out;
+  -webkit-transition: 500ms;
+  -webkit-transition-timing-function: ease-in-out;
+}
+
+/* Footer */
+.footer{
+  height: 9px;
+}
+
+.footer-text{
+  margin-top: 50px;
+  color: rgba(255,255,255,.87);
+}
+
+.footer-link{
+  text-decoration: none;
+  color: #0a64c3
+}
+
+.footer-link:hover{
+  color: #666;
+}
