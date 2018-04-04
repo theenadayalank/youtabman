@@ -1,7 +1,6 @@
 var browser = browser || chrome;
 let tabCount;
 
-
 /* After document is ready */
 $(document).ready(() => {
   searchYoutubeTabs();
@@ -21,7 +20,6 @@ $('.search-icon').click(() => {
  let url= "https://www.youtube.com";
  window.open(url, '_blank');
 })
-
 
 
 function searchYoutubeTabs(){
@@ -56,8 +54,9 @@ function getTabController() {
         let mediaBody = $('<div class="media-body"></div>');
         let mediaTitle = $('<span class="media-body-title">'+videoTitle+'</span>');
         let mediaControl = $('<div class="playlist-control"></div>');
+        let replayButton  = '';
 
-        chrome.tabs.executeScript(tabID,
+        browser.tabs.executeScript(tabID,
           {
             code: "document.querySelectorAll('.ytp-play-button')[0].getAttribute('aria-label')"
           }, (results) => {
@@ -78,7 +77,7 @@ function getTabController() {
                 prepend: '<img src="/icons/'+playOrPause.toLowerCase()+'.svg" class="svg" alt="'+playOrPause+'">',
                 tabindex: -1,
                 click: () => {
-                  chrome.tabs.executeScript(tabID,
+                  browser.tabs.executeScript(tabID,
                     {
                       code: "document.getElementsByClassName('ytp-play-button ytp-button')[0].click();"
                     }, () => {
@@ -93,7 +92,7 @@ function getTabController() {
                 prepend: '<img src="/icons/next.svg" class="svg svg-next" alt="Next">',
                 tabindex: -1,
                 click: () => {
-                  chrome.tabs.executeScript(tabID,
+                  browser.tabs.executeScript(tabID,
                     {
                       code: "document.getElementsByClassName('ytp-next-button ytp-button')[0].click();"
                     }, () => {
@@ -108,7 +107,7 @@ function getTabController() {
                 prepend: '<img src="/icons/mute.svg" class="svg" alt="Mute">',
                 tabindex: -1,
                 click: () => {
-                  chrome.tabs.executeScript(tabID,
+                  browser.tabs.executeScript(tabID,
                     {
                       code: "document.getElementsByClassName('ytp-mute-button ytp-button')[0].click();"
                     });
@@ -121,16 +120,34 @@ function getTabController() {
                 class: 'svg svg-close',
                 alt: 'Close icon',
                 click: () => {
-                  chrome.tabs.remove(tabID, () => {
+                  browser.tabs.remove(tabID, () => {
                     setTimeout(searchYoutubeTabs, 100);
                    });
                   }
               });
 
+            if(playOrPause !== 'Replay')
+            {
+              replayButton = $('<button/>',
+                {
+                  class: 'btn btn-xs btn-secondary pull-right',
+                  prepend: '<img src="/icons/replay.svg" class="svg" alt="Replay">',
+                  tabindex: -1,
+                  click: () => {
+                    browser.tabs.executeScript(tabID,
+                      {
+                        code: "document.getElementsByTagName('video')[0].currentTime = 0;"
+                      });
+                    }
+                });
+            }
+
+
               mediaControl
                 .append(buttonResume)
                 .append(buttonNext)
-                .append(muteButton);
+                .append(muteButton)
+                .append(replayButton);
 
               mediaBody
                 .append(closeButton)
@@ -167,7 +184,7 @@ function getTabController() {
       let footerContent = $('<div class="footer-text">Made with ❤️ </div>');
 
       footerContent
-        .append('<a href="https://www.theenadayalan.me" class="footer-link" target="_blank">&#169;theena</a>');
+        .append('<a href="https://www.theenadayalan.me" class="footer-link" target="_blank">&#169;Theenadayalan</a>');
 
       searchContainer
         .append(inputElement)

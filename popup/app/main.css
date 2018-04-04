@@ -8,6 +8,11 @@ body{
   overflow: hidden;
 }
 
+.pull-right {
+  display: inline-block;
+  float: right;
+}
+
 .addon-container{
   margin: 3px;
   height: 100%;
@@ -157,6 +162,7 @@ span.media-body-title:hover {
 
 .playlist-control{
   margin-top: 5px;
+  padding-right: 10px;
 }
 
 .svg-close{
@@ -187,4 +193,5 @@ span.media-body-title:hover {
 
 .footer-link:hover{
   color: #666;
+  text-decoration: none;
 }
