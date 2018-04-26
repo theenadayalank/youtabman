@@ -1,0 +1,6 @@
+Generated Files
+/node_modules
+/dist
+
+Unwanted
+/package-lock.json
