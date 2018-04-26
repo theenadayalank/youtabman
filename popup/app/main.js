@@ -1,26 +1,27 @@
-var browser = browser || chrome;
+var browser = browser || chrome; // eslint-disable-line
 let tabCount;
 
-/* After document is ready */
-$(document).ready(() => {
+/* After DOM Content is loaded */
+document.addEventListener('DOMContentLoaded', () => {
   searchYoutubeTabs();
 });
 
-/* Refresh Button*/
-$('.refresh-icon').click(() => {
-    searchYoutubeTabs();
- });
-
-$('.info-icon').click(() => {
-  let url= "https://www.theenadayalan.me";
-  window.open(url, '_blank');
+/* Refresh Button Action*/
+document.getElementsByClassName('refresh-icon')[0].addEventListener('click', () => {
+  searchYoutubeTabs();
 });
 
-$('.search-icon').click(() => {
- let url= "https://www.youtube.com";
- window.open(url, '_blank');
-})
+/* Info icon Action*/
+document.getElementsByClassName('info-icon')[0].addEventListener('click', () => {
+  openWebSite();
+});
 
+/* Search Icon Action*/
+document.getElementsByClassName('search-icon')[0].addEventListener('click', () => {
+  let url= 'https://www.youtube.com';
+  window.open(url, '_blank');
+  window.close();
+});
 
 function searchYoutubeTabs(){
   emptyExistingContents();
@@ -28,146 +29,203 @@ function searchYoutubeTabs(){
 }
 
 function emptyExistingContents() {
-  $('.all-youtube-tabs').empty();
-  $('.search-container').remove();
+  var allTabsNode = document.getElementById('all-youtube-tabs');
+  while (allTabsNode.firstChild) {
+    allTabsNode.removeChild(allTabsNode.firstChild);
+  }
 }
 
 function getTabController() {
   tabCount=0;
-  browser.tabs.query({},(tab) => {
-    $.each(tab, (index, value) => {
+  browser.tabs.query({},(tabs) => {
+    tabs.forEach((value) => {
       var url = value.url;
-      if (url.match("https://www.youtube.com/watch")) {
+      if (url.match('https://www.youtube.com/watch')) {
         tabCount++;
         let playOrPauseClass = '';
         let tabID = value.id;
         let videoTitle = value.title;
-        let videoID= url.split('v=')[1]
+        let videoID= url.split('v=')[1];
         let ampersandPosition = videoID.indexOf('&');
-        if(ampersandPosition != -1) {
+        if(ampersandPosition !== -1) {
           videoID = videoID.substring(0, ampersandPosition);
         }
         let playOrPause = '';
 
-        let playlist = $('<div class="playlist media"></div>');
-        let videoThumbnail = $('<img class="rounded playlist-thumbnail" src="https://img.youtube.com/vi/'+videoID+'/default.jpg" class="rounded">')
-        let mediaBody = $('<div class="media-body"></div>');
-        let mediaTitle = $('<span class="media-body-title">'+videoTitle+'</span>');
-        let mediaControl = $('<div class="playlist-control"></div>');
+        let playlist = createDOMElement('div', {
+          class: 'playlist'
+        });
+
+        let videoThumbnail = createDOMElement('img', {
+          class: 'rounded playlist-thumbnail',
+          src: 'https://img.youtube.com/vi/'+videoID+'/default.jpg'
+        });
+
+        let mediaBody = createDOMElement('div', {
+          class: 'media-body'
+        });
+
+        let mediaTitle = createDOMElement('span', {
+          class: 'media-body-title',
+        });
+        mediaTitle.textContent=videoTitle;
+
+        let mediaControl = createDOMElement('div', {
+          class: 'playlist-control'
+        });
         let replayButton  = '';
 
         browser.tabs.executeScript(tabID,
           {
-            code: "document.querySelectorAll('.ytp-play-button')[0].getAttribute('aria-label')"
+            code: 'document.querySelectorAll(\'.ytp-play-button\')[0].getAttribute(\'aria-label\')'
           }, (results) => {
             playOrPause = results[0];
 
             if(playOrPause === 'Play'){
-              playOrPauseClass = 'btn-success';
+              playOrPauseClass = 'btn-green';
             } else if(playOrPause === 'Pause'){
-              playOrPauseClass = 'btn-secondary';
+              playOrPauseClass = 'btn-grey';
             } else {
               playOrPause = 'Replay';
-              playOrPauseClass = 'btn-secondary';
+              playOrPauseClass = 'btn-grey';
             }
 
-            let buttonResume = $('<button/>',
-              {
-                class: 'btn '+playOrPauseClass+' btn-xs',
-                prepend: '<img src="/icons/'+playOrPause.toLowerCase()+'.svg" class="svg" alt="'+playOrPause+'">',
-                tabindex: -1,
-                click: () => {
-                  browser.tabs.executeScript(tabID,
-                    {
-                      code: "document.getElementsByClassName('ytp-play-button ytp-button')[0].click();"
-                    }, () => {
-                        setTimeout(searchYoutubeTabs, 100);
-                    });
-                  }
-              });
+            /* Play or Pause Button*/
+            let playButton = createDOMElement('button', {
+              class: 'btn '+playOrPauseClass+' btn-xs',
+              name: playOrPause,
+              tabindex: -1
+            });
 
-            let buttonNext = $('<button/>',
-              {
-                class: 'btn btn-xs btn-primary',
-                prepend: '<img src="/icons/next.svg" class="svg svg-next" alt="Next">',
-                tabindex: -1,
-                click: () => {
-                  browser.tabs.executeScript(tabID,
-                    {
-                      code: "document.getElementsByClassName('ytp-next-button ytp-button')[0].click();"
-                    }, () => {
-                        setTimeout(searchYoutubeTabs, 2000);
-                      });
-                  }
-              });
+            let imgPlay = createDOMElement('img', {
+              src: '/icons/'+playOrPause.toLowerCase()+'.svg',
+              class: 'svg',
+              alt: playOrPause,
+            });
 
-            let muteButton = $('<button/>',
-              {
-                class: 'btn btn-xs btn-danger',
-                prepend: '<img src="/icons/mute.svg" class="svg" alt="Mute">',
-                tabindex: -1,
-                click: () => {
-                  browser.tabs.executeScript(tabID,
-                    {
-                      code: "document.getElementsByClassName('ytp-mute-button ytp-button')[0].click();"
-                    });
-                  }
-              });
+            playButton.appendChild(imgPlay);
 
-            let closeButton = $('<img/>',
-              {
-                src: '/icons/close.svg',
-                class: 'svg svg-close',
-                alt: 'Close icon',
-                click: () => {
-                  browser.tabs.remove(tabID, () => {
-                    setTimeout(searchYoutubeTabs, 100);
-                   });
-                  }
-              });
-
-            if(playOrPause !== 'Replay')
-            {
-              replayButton = $('<button/>',
+            playButton.addEventListener('click', () => {
+              browser.tabs.executeScript(tabID,
                 {
-                  class: 'btn btn-xs btn-secondary pull-right',
-                  prepend: '<img src="/icons/replay.svg" class="svg" alt="Replay">',
-                  tabindex: -1,
-                  click: () => {
-                    browser.tabs.executeScript(tabID,
-                      {
-                        code: "document.getElementsByTagName('video')[0].currentTime = 0;"
-                      });
-                    }
+                  code: 'document.getElementsByClassName(\'ytp-play-button ytp-button\')[0].click();'
+                }, () => {
+                  setTimeout(searchYoutubeTabs, 100);
                 });
+            });
+
+            /* Next Button*/
+            let nextButton = createDOMElement('button',{
+              class: 'btn btn-xs btn-blue',
+              name: 'Next',
+              tabindex: -1
+            });
+
+            let imgNext = createDOMElement('img', {
+              src: '/icons/next.svg',
+              class: 'svg svg-next',
+              alt: 'Next'
+            });
+
+            nextButton.appendChild(imgNext);
+
+            nextButton.addEventListener('click', () => {
+              browser.tabs.executeScript(tabID,
+                {
+                  code: 'document.getElementsByClassName(\'ytp-next-button ytp-button\')[0].click();'
+                }, () => {
+                  setTimeout(searchYoutubeTabs, 2000);
+                });
+            });
+
+            /* Mute Button*/
+            let muteButton = createDOMElement('button', {
+              class: 'btn btn-xs btn-red',
+              name: 'Mute',
+              tabindex: -1
+            });
+
+            let imgMute = createDOMElement('img', {
+              src: '/icons/mute.svg',
+              class: 'svg',
+              alt: 'Mute'
+            });
+
+            muteButton.appendChild(imgMute);
+
+            muteButton.addEventListener('click', () => {
+              browser.tabs.executeScript(tabID,
+                {
+                  code: 'document.getElementsByClassName(\'ytp-mute-button ytp-button\')[0].click();'
+                });
+            });
+
+            /* Replay Button*/
+            if(playOrPause !== 'Replay') // Hide Replay Button if the video has ended
+            {
+              replayButton = createDOMElement('button', {
+                class: 'btn btn-xs btn-grey pull-right',
+                name: 'Replay',
+                tabindex: -1
+              });
+
+              let imgReplay = createDOMElement('img', {
+                src: '/icons/replay.svg',
+                class: 'svg',
+                alt: 'Replay'
+              });
+
+              replayButton.appendChild(imgReplay);
+
+              replayButton.addEventListener('click', () => {
+                browser.tabs.executeScript(tabID,
+                  {
+                    code: 'document.getElementsByTagName(\'video\')[0].currentTime = 0;'
+                  });
+              });
             }
 
+            /* Close Button*/
+            let closeButton = createDOMElement('img', {
+              src: '/icons/close.svg',
+              class: 'svg svg-close',
+              alt: 'Close'
+            });
 
-              mediaControl
-                .append(buttonResume)
-                .append(buttonNext)
-                .append(muteButton)
-                .append(replayButton);
+            closeButton.addEventListener('click', () => {
+              browser.tabs.remove(tabID, () => {
+                setTimeout(searchYoutubeTabs, 100);
+              });
+            });
 
-              mediaBody
-                .append(closeButton)
-                .append(mediaTitle)
-                .append('<hr class="line">')
-                .append(mediaControl);
 
-              playlist
-                .append(videoThumbnail)
-                .append(mediaBody);
+            mediaControl.appendChild(playButton);
+            mediaControl.appendChild(nextButton);
+            mediaControl.appendChild(muteButton);
+            if(replayButton){
+              mediaControl.appendChild(replayButton);
+            }
 
-              $('.all-youtube-tabs').append(playlist);
+            mediaBody.appendChild(closeButton);
+            mediaBody.appendChild(mediaTitle);
+            mediaBody.appendChild(createDOMElement('hr',{class:'line'}));
+            mediaBody.appendChild(mediaControl);
+
+            playlist.appendChild(videoThumbnail);
+            playlist.appendChild(mediaBody);
+
+            document.getElementById('all-youtube-tabs').appendChild(playlist);
           }
         );
       }
     });
+
     if(tabCount === 0){
       emptyExistingContents();
-      let searchContainer = $('<div class="search-container"></div>');
-      let inputElement = $('<input>').attr({
+      let searchContainer = createDOMElement('div', {
+        class: 'search-container'
+      });
+      let inputElement = createDOMElement('input', {
         id: 'search',
         class: 'search-input',
         name: 'searchInput',
@@ -175,34 +233,57 @@ function getTabController() {
       });
 
       inputElement
-      .keypress ((e) => {
-        setTimeout(() => {
+        .addEventListener('click', (e) => {
+          setTimeout(() => {
             startSearching(e);
-        }, 100)
+          }, 100);
+        });
+
+      let footerContent = createDOMElement('div', {
+        class: 'footer-text'
+      });
+      footerContent.textContent = 'Made with ❤️ ';
+
+      let footerLink = createDOMElement('span', {
+        class: 'footer-link cursor-pointer',
+      });
+      footerLink.textContent = '©Theenadayalan';
+      footerLink.addEventListener('click', () => {
+        openWebSite();
       });
 
-      let footerContent = $('<div class="footer-text">Made with ❤️ </div>');
+      footerContent.appendChild(footerLink);
 
-      footerContent
-        .append('<a href="https://www.theenadayalan.me" class="footer-link" target="_blank">&#169;Theenadayalan</a>');
+      searchContainer.appendChild(inputElement);
+      searchContainer.appendChild(footerContent);
 
-      searchContainer
-        .append(inputElement)
-        .append(footerContent)
-
-      $('.all-youtube-tabs').append(searchContainer);
+      document.getElementById('all-youtube-tabs')
+        .appendChild(searchContainer);
     }
   });
 }
 
 
+/*** Function to Create Element and assign attributes to that element ***/
+function createDOMElement(elementName, attrs) {
+  let element = document.createElement(elementName);
+  Object.keys(attrs).forEach(key => element.setAttribute(key, attrs[key]));
+  return element;
+}
+
 function startSearching(e){
-  if(e.which == 13)  // the enter key code
-   {
-     let keyword = $('.search-input').val();
-     keyword= encodeURIComponent(keyword);
-     let url= "https://www.youtube.com/results?search_query="+keyword;
-     window.open(url, '_blank');
-     window.close();
-   }
+  if(e.which === 13)  // key code for enter
+  {
+    let keyword = document.getElementsByClassName('search-input')[0].value;
+    keyword= encodeURIComponent(keyword);
+    let url= 'https://www.youtube.com/results?search_query='+keyword;
+    window.open(url, '_blank');
+    window.close();
+  }
+}
+
+function openWebSite(){
+  let url= 'https://www.theenadayalan.me';
+  window.open(url, '_blank');
+  window.close();
 }
