@@ -201,6 +201,7 @@ button:focus, input[type="button"]:focus, button:active, input[type="button"]:ac
 }
 
 .media-body{
+  width: 70%;
   height: 100%;
   position: relative;
 }

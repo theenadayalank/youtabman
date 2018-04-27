@@ -1,6 +1,6 @@
 {
   "name": "youtabman",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A Web Extension to manage all of your youtube tabs at one place😉",
   "main": "/popup/index.html",
   "scripts": {
