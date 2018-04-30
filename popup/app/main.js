@@ -233,7 +233,7 @@ function getTabController() {
       });
 
       inputElement
-        .addEventListener('click', (e) => {
+        .addEventListener('keypress', (e) => {
           setTimeout(() => {
             startSearching(e);
           }, 100);

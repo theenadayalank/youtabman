@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "YouTabMan",
-  "version": "1.2.2",
+  "version": "1.2.3",
 
   "description": "A Web Extension used to control all of your YouTube tabs.",
 
@@ -9,8 +9,12 @@
     "default_title": "YouTabMan",
     "default_popup": "popup/index.html",
     "default_icon": {
-      "48": "icons/popup_icon/icon_48.png"
+      "128": "icons/popup_icon/icon_128.png"
     }
+  },
+
+  "icons":{
+    "128":"icons/popup_icon/icon_128.png"
   },
 
   "permissions": [
