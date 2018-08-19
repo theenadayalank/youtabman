@@ -4,6 +4,10 @@ module.exports = {
    ecmaVersion: 8,
    sourceType: 'module'
   },
+  globals: {
+    module : true,
+    require: false
+  },
   "env": {
     "browser": true,
     "node": false
