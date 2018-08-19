@@ -16,8 +16,7 @@ module.exports = { // eslint-disable-line
   // disable hashing in js files
   configureWebpack: {
     output: {
-      filename: '[name].js',
-      publicPath: ''
+      filename: '[name].js'
     }
   }
 };
