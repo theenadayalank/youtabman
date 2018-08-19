@@ -19,7 +19,7 @@
 
 <script>
 import MediaTab from './components/MediaTab.vue';
-import SearchContainer from './components/SearchContainer.vue'
+import SearchContainer from './components/SearchContainer.vue';
 
 const browser = browser || chrome;
 
@@ -32,7 +32,7 @@ export default {
     return {
       tabs: [],
       canShowSearchContainer: false
-    }
+    };
   },
   methods: {
     openUrl(url) {
@@ -47,10 +47,10 @@ export default {
       await browser.tabs.query({},(tabs) => {
         tabs.forEach(function(tab) {
           let url = tab.url;
-          if (url.match("https://www.youtube.com/watch")) {
-            computedTabs.push(tab)
+          if (url.match('https://www.youtube.com/watch')) {
+            computedTabs.push(tab);
           }
-        })
+        });
         this.canShowSearchContainer = computedTabs.length > 0 ? false : true; 
       });
       this.tabs = computedTabs;
@@ -58,16 +58,16 @@ export default {
     closeVideo(tabId) {
       let tabs = this.tabs;
       browser.tabs.remove(tabId, () => {
-        this.tabs = tabs.filter((tab) => tab.id != tabId);
+        this.tabs = tabs.filter((tab) => tab.id !== tabId);
         this.canShowSearchContainer = this.tabs.length > 0 ? false : true; 
-      })
+      });
     }
   },
   components: {
     MediaTab: MediaTab,
     SearchContainer: SearchContainer
   }
-}
+};
 </script>
 
 <style>

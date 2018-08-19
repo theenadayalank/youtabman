@@ -1,18 +1,23 @@
 module.exports = {
   root: true,
+  env: {
+    node: false,
+    browser: true
+  },
   parserOptions: {
-   ecmaVersion: 8,
-   sourceType: 'module'
-  },
-  globals: {
+    ecmaVersion: 8,
+    sourceType: 'module'
+   },
+   globals: {
     module : true,
-    require: false
+    require: false,
+    chrome: false,
+    browser: false
   },
-  "env": {
-    "browser": true,
-    "node": false
-  },
-  "extends": "eslint:recommended",
+  "extends": [
+    "plugin:vue/essential",
+    "eslint:recommended"
+  ],
   "rules": {
     "indent": [
         "error",
@@ -41,11 +46,14 @@ module.exports = {
       'nonwords': false
     }]
   },
+  "parserOptions": {
+    "parser": "babel-eslint"
+  },
   overrides: [
     // node files
     {
       files: [
-        'gulpfile.js',
+        'deploy.js',
       ],
       parserOptions: {
         sourceType: 'script',

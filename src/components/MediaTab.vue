@@ -36,81 +36,81 @@
 </template>
 
 <script>
-  const browser = browser || chrome;
-  export default {
-    name: 'MediaTab',
-    data() {
-      return {
-        count: 0,
-        isMuted: false,
-        videoStatus: "playing",
-        isLooped: false,
-        nextVideoTitle: "",
-        showNext: false,
-        nextVideoThumbnail: ""
+const browser = browser || chrome;
+export default {
+  name: 'MediaTab',
+  data() {
+    return {
+      count: 0,
+      isMuted: false,
+      videoStatus: 'playing',
+      isLooped: false,
+      nextVideoTitle: '',
+      showNext: false,
+      nextVideoThumbnail: ''
+    };
+  },
+  props: ['tab', 'initializeTabs', 'closeVideo'],
+  created() {
+    this.initializeControls();
+  },
+  computed: {
+    computeVideoThumbnail() {
+      let videoID= this.tab.url.split('v=')[1];
+      let ampersandPosition = videoID.indexOf('&');
+      if(ampersandPosition !== -1) {
+        videoID = videoID.substring(0, ampersandPosition);
       }
-    },
-    props: ["tab", "initializeTabs", "closeVideo"],
-    created() {
-      this.initializeControls();
-    },
-    computed: {
-      computeVideoThumbnail() {
-        let videoID= this.tab.url.split('v=')[1];
-        let ampersandPosition = videoID.indexOf('&');
-        if(ampersandPosition !== -1) {
-          videoID = videoID.substring(0, ampersandPosition);
+      return `https://img.youtube.com/vi/${videoID}/default.jpg`;
+    }
+  },
+  methods: {
+    sendMessage(message) {
+      browser.tabs.sendMessage(this.tab.id, message, (output) => {
+        console.log('Action Performed: ' + message); //eslint-disable-line
+        console.log('Result: ' + output); //eslint-disable-line
+        switch (message) {
+        case 'streaming':
+          this.videoStatus = output;
+          break;
+        case 'next':
+          setTimeout(() => {
+            this.initializeTabs();
+          }, 1500);
+          break;
+        case 'mute':
+          this.isMuted = output;
+          break;
+        case 'replay':
+          break;
+        case 'loop':
+          this.isLooped = output;
+          break;
+        default:
+          break;
         }
-        return `https://img.youtube.com/vi/${videoID}/default.jpg`;
-      }
+      });
     },
-    methods: {
-      sendMessage(message) {
-        browser.tabs.sendMessage(this.tab.id, message, (output) => {
-          console.log("Action Performed: " + message);
-          console.log("Result: " + output);
-          switch (message) {
-            case "streaming":
-              this.videoStatus = output;
-              break;
-            case "next":
-              setTimeout(() => {
-                this.initializeTabs();
-              }, 1500);
-              break;
-            case "mute":
-              this.isMuted = output;
-              break;
-            case "replay":
-              break;
-            case "loop":
-              this.isLooped = output;
-              break;
-            default:
-              break
-          }
-        })
-      },
-      navigateToTab() {
-        this.tab.active ? window.close() : null;
-        browser.tabs.update(this.tab.id, {
-            active: true
-        })
-      },
-      initializeControls() {
-        browser.tabs.sendMessage(this.tab.id, "initialize", (result) => {
-          this.isMuted = result.isMuted;
-          this.videoStatus = result.videoStatus;
-          this.isLooped = result.isLooped;
-          this.nextVideoTitle = result.nextVideoTitle;
-          this.nextVideoThumbnail = result.nextVideoThumbnail
-        })
-      },
-      toggleView(value) {
-        this.showNext = value
-      }
+    navigateToTab() {
+      this.tab.active ? window.close() : null;
+      browser.tabs.update(this.tab.id, {
+        active: true
+      });
+    },
+    initializeControls() {
+      browser.tabs.sendMessage(this.tab.id, 'initialize', (result) => {
+        this.isMuted = result.isMuted;
+        this.videoStatus = result.videoStatus;
+        this.isLooped = result.isLooped;
+        this.nextVideoTitle = result.nextVideoTitle;
+        this.nextVideoThumbnail = result.nextVideoThumbnail;
+      });
+    },
+    toggleView(value) {
+      this.showNext = value;
     }
   }
+};
 </script>
 
 <style scoped>

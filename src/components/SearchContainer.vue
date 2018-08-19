@@ -13,16 +13,16 @@ export default {
   name: 'SearchContainer',
   data() {
     return {
-      keyword: ""
-    }
+      keyword: ''
+    };
   },
-  props: ["openUrl"],
+  props: ['openUrl'],
   methods: {
     searchKeyword(keyword) {
-      this.openUrl("https://www.youtube.com/results?search_query=" + encodeURIComponent(keyword));
+      this.openUrl('https://www.youtube.com/results?search_query=' + encodeURIComponent(keyword));
     }
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
