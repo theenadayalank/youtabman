@@ -36,8 +36,11 @@ export default {
   },
   methods: {
     openUrl(url) {
-      window.open(url, "_blank");
-      window.close();
+      browser.tabs.create({
+        url: url
+      }, ()=> {
+        window.close();
+      });
     },
     async initializeTabs() {
       let computedTabs = [];
