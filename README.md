@@ -2,7 +2,7 @@
 A Web Extension to manage all of your youtube tabs at one place😉
 
 ## Getting Started
-YouTabMan is a ultra simple web extension to get a control of all of the currently opened YouTubeVideos in a same place.
+YouTabMan is an ultra simple web extension to get a control of all of the currently opened YouTubeVideos in a same place.
 
 ### Prerequisites
 This Extension is supported only in Google Chrome and Firefox.
