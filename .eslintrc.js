@@ -6,48 +6,46 @@ module.exports = {
   },
   parserOptions: {
     ecmaVersion: 8,
-    sourceType: 'module'
-   },
-   globals: {
+    sourceType: 'module',
+    parser: 'babel-eslint'
+  },
+  globals: {
     module : true,
     require: false,
     chrome: false,
     browser: false
   },
-  "extends": [
-    "plugin:vue/essential",
-    "eslint:recommended"
+  'extends': [
+    'plugin:vue/essential',
+    'eslint:recommended'
   ],
-  "rules": {
-    "indent": [
-        "error",
-        2
+  'rules': {
+    'indent': [
+      'error',
+      2
     ],
-    "linebreak-style": [
-        "error",
-        "unix"
+    'linebreak-style': [
+      'error',
+      'unix'
     ],
-    "quotes": [
-        "error",
-        "single"
+    'quotes': [
+      'error',
+      'single'
     ],
-    "semi": [
-        "error",
-        "always"
+    'semi': [
+      'error',
+      'always'
     ],
-    "no-alert": "error",
-    eqeqeq: ["error", "always"],
-    "no-eval": "error",
-    "no-caller": "error",
-    "no-undef": "error",
-    "no-eq-null": "error",
+    'no-alert': 'error',
+    eqeqeq: ['error', 'always'],
+    'no-eval': 'error',
+    'no-caller': 'error',
+    'no-undef': 'error',
+    'no-eq-null': 'error',
     'space-unary-ops': ['error', {
       'words': true,
       'nonwords': false
     }]
-  },
-  "parserOptions": {
-    "parser": "babel-eslint"
   },
   overrides: [
     // node files
