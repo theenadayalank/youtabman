@@ -26,7 +26,7 @@ var browser = browser || chrome; // eslint-disable-line
     if(message === 'initialize') {
       let videoStatus; 
       if(streamButton) {
-        videoStatus = streamButton === 'Play' ? 'paused' : 'playing';
+        videoStatus = streamButton === 'Play (k)' ? 'paused' : 'playing';
       } else {
         videoStatus = 'replay';
       }
@@ -41,10 +41,10 @@ var browser = browser || chrome; // eslint-disable-line
 
     switch(message) {
     case 'streaming': 
-      if(streamButton === 'Pause') {
+      if(streamButton === 'Pause (k)') {
         video.pause();
         callback('paused');
-      } else if (streamButton === 'Play'){
+      } else if (streamButton === 'Play (k)'){
         video.play();
         callback('playing');
       } else {

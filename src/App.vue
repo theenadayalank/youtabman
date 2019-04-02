@@ -12,59 +12,41 @@
     </div>
     <SearchContainer v-if="canShowSearchContainer" :openUrl=openUrl ></SearchContainer>
     <slot v-else>
-      <MediaTab v-for="tab in tabs" v-bind:key="tab.id" :tab=tab :initializeTabs=initializeTabs :closeVideo=closeVideo></MediaTab>
+      <PlaylistContainer :togglePlaylistView=togglePlaylistView :openUrl=openUrl ref="playlist"></PlaylistContainer>
     </slot>
   </div>
 </template>
 
 <script>
-import MediaTab from './components/MediaTab.vue';
+import PlaylistContainer from './components/PlaylistContainer.vue';
 import SearchContainer from './components/SearchContainer.vue';
 
 const browser = browser || chrome;
 
 export default {
   name: 'app',
-  created() {
-    this.initializeTabs();
-  },
   data() {
     return {
-      tabs: [],
       canShowSearchContainer: false
     };
   },
   methods: {
+    initializeTabs() {
+      this.$refs.playlist.initializeTabs();
+    },
+    togglePlaylistView(value) {
+      this.canShowSearchContainer = value;
+    },
     openUrl(url) {
       browser.tabs.create({
         url: url
       }, ()=> {
         window.close();
       });
-    },
-    async initializeTabs() {
-      let computedTabs = [];
-      await browser.tabs.query({},(tabs) => {
-        tabs.forEach(function(tab) {
-          let url = tab.url;
-          if (url.match('https://www.youtube.com/watch')) {
-            computedTabs.push(tab);
-          }
-        });
-        this.canShowSearchContainer = computedTabs.length > 0 ? false : true; 
-      });
-      this.tabs = computedTabs;
-    },
-    closeVideo(tabId) {
-      let tabs = this.tabs;
-      browser.tabs.remove(tabId, () => {
-        this.tabs = tabs.filter((tab) => tab.id !== tabId);
-        this.canShowSearchContainer = this.tabs.length > 0 ? false : true; 
-      });
     }
   },
   components: {
-    MediaTab: MediaTab,
+    PlaylistContainer: PlaylistContainer,
     SearchContainer: SearchContainer
   }
 };
@@ -99,7 +81,7 @@ export default {
   }
 
   button {
-    width: 2rem;
+    width: 2.2rem;
     cursor: pointer;
 
     display: inline-block;
