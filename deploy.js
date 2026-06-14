@@ -1,9 +1,12 @@
-const zipFolder = require('zip-folder');
+import archiver from 'archiver';
+import { createWriteStream } from 'fs';
 
-zipFolder('dist', 'YouTabMan.zip', function(err) {
-  if(err) {
-    console.error('oh no!', err); //eslint-disable-line
-  } else {
-    console.log('EXCELLENT'); //eslint-disable-line
-  }
-});
+const output = createWriteStream('YouTabMan.zip');
+const archive = archiver('zip', { zlib: { level: 9 } });
+
+output.on('close', () => console.log('EXCELLENT'));
+archive.on('error', (err) => console.error('oh no!', err));
+
+archive.pipe(output);
+archive.directory('dist/', false);
+archive.finalize();

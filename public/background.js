@@ -1,81 +1,72 @@
-/**
- * Variable Declarations
- */
-var browser = browser || chrome; // eslint-disable-line
-
-
 (() => {
-  /*
-  Self Closing function to make the code as private
-  */
-  if (window.hasRun) {
-    return;
-  }
+  if (window.hasRun) return;
   window.hasRun = true;
 
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    const video = document.querySelector('video');
+    if (!video) return false;
 
-  // Event Listeners
-  browser.runtime.onMessage.addListener((message, sender , callback) => {
-    
-    // Needed Propertes
-    let video = document.getElementsByTagName('video')[0];
-    let streamButton = document.querySelectorAll('.ytp-play-button')[0].getAttribute('aria-label');
-    let nextVideoTitle = document.querySelectorAll('.ytp-next-button')[0].getAttribute('data-tooltip-text');
-    let nextVideoThumbnail = document.querySelectorAll('.ytp-next-button')[0].getAttribute('data-preview');
+    const playButton = document.querySelector('.ytp-play-button');
+    const nextButton = document.querySelector('.ytp-next-button');
+    const streamButtonLabel = playButton?.getAttribute('aria-label') ?? '';
+    const nextVideoTitle = nextButton?.getAttribute('data-tooltip-text') ?? '';
+    const nextVideoPreview = nextButton?.getAttribute('data-preview') ?? '';
+    const nextVideoThumbnail = nextVideoPreview.replace('hqdefault.jpg', 'default.jpg');
+    const isPlaying = streamButtonLabel === 'Pause (k)';
+    const isPaused = streamButtonLabel === 'Play (k)';
 
-    if(message === 'initialize') {
-      let videoStatus; 
-      if(streamButton) {
-        videoStatus = streamButton === 'Play (k)' ? 'paused' : 'playing';
+    switch (message) {
+    case 'initialize': {
+      let videoStatus;
+      if (isPlaying) {
+        videoStatus = 'playing';
+      } else if (isPaused) {
+        videoStatus = 'paused';
       } else {
         videoStatus = 'replay';
       }
-      callback({
-        videoStatus: videoStatus,
+      sendResponse({
+        videoStatus,
         isMuted: video.muted,
         isLooped: video.loop,
-        nextVideoTitle: nextVideoTitle,
-        nextVideoThumbnail: nextVideoThumbnail.replace('hqdefault.jpg', 'default.jpg')
+        nextVideoTitle,
+        nextVideoThumbnail,
       });
+      break;
     }
-
-    switch(message) {
-    case 'streaming': 
-      if(streamButton === 'Pause (k)') {
+    case 'streaming':
+      if (isPlaying) {
         video.pause();
-        callback('paused');
-      } else if (streamButton === 'Play (k)'){
+        sendResponse('paused');
+      } else if (isPaused) {
         video.play();
-        callback('playing');
+        sendResponse('playing');
       } else {
-        document.getElementsByClassName('ytp-play-button ytp-button')[0].click();
-        callback('playing');
+        document.querySelector('.ytp-play-button.ytp-button')?.click();
+        sendResponse('playing');
       }
       break;
-      
     case 'next':
-      video.loop ? video.loop = false : null;
-      document.getElementsByClassName('ytp-next-button ytp-button')[0].click();
-      callback('next');
+      if (video.loop) video.loop = false;
+      document.querySelector('.ytp-next-button.ytp-button')?.click();
+      sendResponse('next');
       break;
-
-    case 'replay': 
-      document.getElementsByTagName('video')[0].currentTime = 0;
-      callback('replayed');
-      break; 
-
+    case 'replay':
+      video.currentTime = 0;
+      sendResponse('replayed');
+      break;
     case 'mute':
-      video.muted ? video.muted=false : video.muted=true;
-      callback(video.muted);
+      video.muted = !video.muted;
+      sendResponse(video.muted);
       break;
-
     case 'loop':
-      video.loop ? video.loop=false : video.loop=true;
-      callback(video.loop);
+      video.loop = !video.loop;
+      sendResponse(video.loop);
       break;
-      
-    default: 
+    default:
       break;
     }
+
+    return false;
   });
 })();

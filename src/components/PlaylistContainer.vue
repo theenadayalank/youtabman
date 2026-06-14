@@ -1,54 +1,36 @@
 <template>
   <div>
-    <MediaTab v-for="tab in tabs" v-bind:key="tab.id" :tab=tab :initializeTabs=initializeTabs :closeVideo=closeVideo></MediaTab>
+    <MediaTab
+      v-for="tab in tabs"
+      :key="tab.id"
+      :tab="tab"
+      :initializeTabs="initializeTabs"
+      :closeVideo="closeVideo"
+    />
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue';
+import MediaTab from './MediaTab.vue';
 
-import MediaTab from '../components/MediaTab.vue';
+const props = defineProps(['togglePlaylistView', 'openUrl']);
+const tabs = ref([]);
 
-const browser = browser || chrome;
+async function initializeTabs() {
+  const allTabs = await chrome.tabs.query({});
+  const youtubeTabs = allTabs.filter(tab => tab.url?.includes('https://www.youtube.com/watch'));
+  tabs.value = youtubeTabs;
+  props.togglePlaylistView(youtubeTabs.length === 0);
+}
 
-export default {
-  name: 'app',
-  created() {
-    this.initializeTabs();
-  },
-  data() {
-    return {
-      tabs: []
-    };
-  },
-  props: ['togglePlaylistView', 'openUrl'],
-  methods: {
-    async initializeTabs() {
-      let computedTabs = [];
-      browser.tabs.query({},(tabs) => {
-        tabs.forEach(function(tab) {
-          let url = tab.url;
-          if (url.match('https://www.youtube.com/watch')) {
-            computedTabs.push(tab);
-          }
-        });
-        this.togglePlaylistView(computedTabs.length > 0 ? false : true); 
-      });
-      this.tabs = computedTabs;
-    },
-    closeVideo(tabId) {
-      let tabs = this.tabs;
-      browser.tabs.remove(tabId, () => {
-        this.tabs = tabs.filter((tab) => tab.id !== tabId);
-        this.togglePlaylistView(this.tabs.length > 0 ? false : true); 
-      });
-    }
-  },
-  components: {
-    MediaTab: MediaTab
-  }
-};
+async function closeVideo(tabId) {
+  await chrome.tabs.remove(tabId);
+  tabs.value = tabs.value.filter(tab => tab.id !== tabId);
+  props.togglePlaylistView(tabs.value.length === 0);
+}
+
+defineExpose({ initializeTabs });
+
+onMounted(() => initializeTabs());
 </script>
-
-<style>
-
-</style>

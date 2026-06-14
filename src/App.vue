@@ -5,51 +5,35 @@
         <p>YouTabMan</p>
       </div>
       <div class="header-options">
-        <svg @click=" openUrl('https://www.youtube.com/')" class="search-icon cursor-pointer" fill="#dae0e5" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg>
-        <svg @click=" initializeTabs()" class="refresh-icon cursor-pointer" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" fill="#dae0e5" d="M15.323 4.445a8.234 8.234 0 0 0-5.807-.323 8.237 8.237 0 0 0-5.764 8.41l-2.486.163A10.733 10.733 0 0 1 8.765 1.742a10.742 10.742 0 0 1 8.334.807L19.485 0l.636 7.074-7.493.25 2.695-2.879zm-.092 17.812c-1.05.329-2.141.496-3.224.496-1.765 0-3.517-.456-5.099-1.306L4.517 24l-.635-7.074 7.489-.252-2.693 2.882a8.257 8.257 0 0 0 5.804.322 8.242 8.242 0 0 0 5.763-8.409l2.487-.163a10.727 10.727 0 0 1-7.501 10.951z"></path></svg>
-        <svg @click=" openUrl('https://www.theenadayalan.me/')" class="info-icon cursor-pointer" fill="#dae0e5" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"></path><path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"></path></svg>
+        <svg @click="openUrl('https://www.youtube.com/')" class="search-icon cursor-pointer" fill="#dae0e5" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg>
+        <svg @click="initializeTabs()" class="refresh-icon cursor-pointer" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" fill="#dae0e5" d="M15.323 4.445a8.234 8.234 0 0 0-5.807-.323 8.237 8.237 0 0 0-5.764 8.41l-2.486.163A10.733 10.733 0 0 1 8.765 1.742a10.742 10.742 0 0 1 8.334.807L19.485 0l.636 7.074-7.493.25 2.695-2.879zm-.092 17.812c-1.05.329-2.141.496-3.224.496-1.765 0-3.517-.456-5.099-1.306L4.517 24l-.635-7.074 7.489-.252-2.693 2.882a8.257 8.257 0 0 0 5.804.322 8.242 8.242 0 0 0 5.763-8.409l2.487-.163a10.727 10.727 0 0 1-7.501 10.951z"></path></svg>
+        <svg @click="openUrl('https://www.theenadayalan.me/')" class="info-icon cursor-pointer" fill="#dae0e5" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"></path><path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"></path></svg>
       </div>
     </div>
-    <SearchContainer v-if="canShowSearchContainer" :openUrl=openUrl ></SearchContainer>
-    <slot v-else>
-      <PlaylistContainer :togglePlaylistView=togglePlaylistView :openUrl=openUrl ref="playlist"></PlaylistContainer>
-    </slot>
+    <SearchContainer v-if="canShowSearchContainer" :openUrl="openUrl" />
+    <PlaylistContainer v-else :togglePlaylistView="togglePlaylistView" :openUrl="openUrl" ref="playlist" />
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import PlaylistContainer from './components/PlaylistContainer.vue';
 import SearchContainer from './components/SearchContainer.vue';
 
-const browser = browser || chrome;
+const canShowSearchContainer = ref(false);
+const playlist = ref(null);
 
-export default {
-  name: 'app',
-  data() {
-    return {
-      canShowSearchContainer: false
-    };
-  },
-  methods: {
-    initializeTabs() {
-      this.$refs.playlist.initializeTabs();
-    },
-    togglePlaylistView(value) {
-      this.canShowSearchContainer = value;
-    },
-    openUrl(url) {
-      browser.tabs.create({
-        url: url
-      }, ()=> {
-        window.close();
-      });
-    }
-  },
-  components: {
-    PlaylistContainer: PlaylistContainer,
-    SearchContainer: SearchContainer
-  }
-};
+function initializeTabs() {
+  playlist.value.initializeTabs();
+}
+
+function togglePlaylistView(value) {
+  canShowSearchContainer.value = value;
+}
+
+function openUrl(url) {
+  chrome.tabs.create({ url }, () => window.close());
+}
 </script>
 
 <style>
@@ -139,8 +123,7 @@ export default {
     overflow-x: hidden;
     overflow-y: scroll;
     background: #48b1bf;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to bottom, #06beb6, #48b1bf);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to bottom, #06beb6, #48b1bf); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to bottom, #06beb6, #48b1bf);
     box-shadow: -1px 2px 12px grey;
   }
 

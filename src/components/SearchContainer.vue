@@ -1,31 +1,24 @@
 <template>
   <div class="search-container">
-    <input @keyup.enter=" searchKeyword(searchInput) " class="search-input"  v-model="searchInput" placeholder="Search...">
+    <input @keyup.enter="searchKeyword(searchInput)" class="search-input" v-model="searchInput" placeholder="Search...">
     <div class="footer-text">
-      Made with ❤️ 
-      <span @click=" openUrl('https://www.theenadayalan.me') " class="footer-link cursor-pointer">©Theenadayalan</span>
+      Made with ❤️
+      <span @click="openUrl('https://www.theenadayalan.me')" class="footer-link cursor-pointer">©Theenadayalan</span>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'SearchContainer',
-  data() {
-    return {
-      keyword: ''
-    };
-  },
-  props: ['openUrl'],
-  methods: {
-    searchKeyword(keyword) {
-      this.openUrl('https://www.youtube.com/results?search_query=' + encodeURIComponent(keyword));
-    }
-  }
-};
+<script setup>
+import { ref } from 'vue';
+
+const props = defineProps(['openUrl']);
+const searchInput = ref('');
+
+function searchKeyword(keyword) {
+  props.openUrl(`https://www.youtube.com/results?search_query=${encodeURIComponent(keyword)}`);
+}
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .search-container{
     padding-top: 75px;
@@ -56,11 +49,6 @@ export default {
     color: #a3a3a3;
   }
 
-  /* Footer */
-  .footer{
-    height: 9px;
-  }
-
   .footer-text{
     margin-top: 50px;
     color: rgba(255,255,255,.87);
@@ -68,7 +56,7 @@ export default {
 
   .footer-link{
     text-decoration: none;
-    color: #0a64c3
+    color: #0a64c3;
   }
 
   .footer-link:hover{
