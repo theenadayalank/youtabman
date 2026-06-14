@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="playlist-list">
     <MediaTab
       v-for="tab in tabs"
       :key="tab.id"
@@ -34,3 +34,9 @@ defineExpose({ initializeTabs });
 
 onMounted(() => initializeTabs());
 </script>
+
+<style scoped>
+  .playlist-list {
+    padding: 6px 0 8px;
+  }
+</style>
